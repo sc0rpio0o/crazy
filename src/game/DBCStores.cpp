@@ -126,6 +126,7 @@ SpellCategoryStore sSpellCategoryStore;
 PetFamilySpellsStore sPetFamilySpellsStore;
 
 DBCStorage <SpellCastTimesEntry> sSpellCastTimesStore(SpellCastTimefmt);
+DBCStorage <SpellDifficultyEntry> sSpellDifficultyStore(SpellDifficultyfmt);
 DBCStorage <SpellDurationEntry> sSpellDurationStore(SpellDurationfmt);
 DBCStorage <SpellFocusObjectEntry> sSpellFocusObjectStore(SpellFocusObjectfmt);
 DBCStorage <SpellRadiusEntry> sSpellRadiusStore(SpellRadiusfmt);
@@ -149,7 +150,7 @@ TaxiMask sOldContinentsNodesMask;
 TaxiPathSetBySource sTaxiPathSetBySource;
 DBCStorage <TaxiPathEntry> sTaxiPathStore(TaxiPathEntryfmt);
 
-// DBC used only for initialization sTaxiPathNodeStore at startup.
+// DBC store data but sTaxiPathNodesByPath used for fast access to entries (it's not owner pointed data).
 TaxiPathNodesByPath sTaxiPathNodesByPath;
 static DBCStorage <TaxiPathNodeEntry> sTaxiPathNodeStore(TaxiPathNodeEntryfmt);
 
@@ -323,7 +324,7 @@ void LoadDBCStores(const std::string& dataPath)
         exit(1);
     }
 
-    const uint32 DBCFilesCount = 84;
+    const uint32 DBCFilesCount = 85;
 
     barGoLink bar( (int)DBCFilesCount );
 
@@ -478,6 +479,7 @@ void LoadDBCStores(const std::string& dataPath)
 
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSpellCastTimesStore,      dbcPath,"SpellCastTimes.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSpellDurationStore,       dbcPath,"SpellDuration.dbc");
+    LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSpellDifficultyStore,     dbcPath,"SpellDifficulty.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSpellFocusObjectStore,    dbcPath,"SpellFocusObject.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSpellItemEnchantmentStore,dbcPath,"SpellItemEnchantment.dbc");
     LoadDBC(availableDbcLocales,bar,bad_dbc_files,sSpellItemEnchantmentConditionStore,dbcPath,"SpellItemEnchantmentCondition.dbc");
@@ -545,11 +547,10 @@ void LoadDBCStores(const std::string& dataPath)
     sTaxiPathNodesByPath.resize(pathCount);                 // 0 and some other indexes not used
     for(uint32 i = 1; i < sTaxiPathNodesByPath.size(); ++i)
         sTaxiPathNodesByPath[i].resize(pathLength[i]);
-    // fill data
+    // fill data (pointers to sTaxiPathNodeStore elements
     for(uint32 i = 1; i < sTaxiPathNodeStore.GetNumRows(); ++i)
         if(TaxiPathNodeEntry const* entry = sTaxiPathNodeStore.LookupEntry(i))
-            sTaxiPathNodesByPath[entry->path][entry->index] = TaxiPathNode(entry->mapid,entry->x,entry->y,entry->z,entry->actionFlag,entry->delay);
-    sTaxiPathNodeStore.Clear();
+            sTaxiPathNodesByPath[entry->path][entry->index] = entry;
 
     // Initialize global taxinodes mask
     // include existed nodes that have at least single not spell base (scripted) path

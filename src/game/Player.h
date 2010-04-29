@@ -884,34 +884,35 @@ enum PlayedTimeIndex
 // used at player loading query list preparing, and later result selection
 enum PlayerLoginQueryIndex
 {
-    PLAYER_LOGIN_QUERY_LOADFROM                 = 0,
-    PLAYER_LOGIN_QUERY_LOADGROUP                = 1,
-    PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES       = 2,
-    PLAYER_LOGIN_QUERY_LOADAURAS                = 3,
-    PLAYER_LOGIN_QUERY_LOADSPELLS               = 4,
-    PLAYER_LOGIN_QUERY_LOADQUESTSTATUS          = 5,
-    PLAYER_LOGIN_QUERY_LOADDAILYQUESTSTATUS     = 6,
-    PLAYER_LOGIN_QUERY_LOADREPUTATION           = 7,
-    PLAYER_LOGIN_QUERY_LOADINVENTORY            = 8,
-    PLAYER_LOGIN_QUERY_LOADACTIONS              = 9,
-    PLAYER_LOGIN_QUERY_LOADSOCIALLIST           = 10,
-    PLAYER_LOGIN_QUERY_LOADHOMEBIND             = 11,
-    PLAYER_LOGIN_QUERY_LOADSPELLCOOLDOWNS       = 12,
-    PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES        = 13,
-    PLAYER_LOGIN_QUERY_LOADGUILD                = 14,
-    PLAYER_LOGIN_QUERY_LOADARENAINFO            = 15,
-    PLAYER_LOGIN_QUERY_LOADACHIEVEMENTS         = 16,
-    PLAYER_LOGIN_QUERY_LOADCRITERIAPROGRESS     = 17,
-    PLAYER_LOGIN_QUERY_LOADEQUIPMENTSETS        = 18,
-    PLAYER_LOGIN_QUERY_LOADBGDATA               = 19,
-    PLAYER_LOGIN_QUERY_LOADACCOUNTDATA          = 20,
-    PLAYER_LOGIN_QUERY_LOADSKILLS               = 21,
-    PLAYER_LOGIN_QUERY_LOADGLYPHS               = 22,
-    PLAYER_LOGIN_QUERY_LOADMAILS                = 23,
-    PLAYER_LOGIN_QUERY_LOADMAILEDITEMS          = 24,
-    PLAYER_LOGIN_QUERY_LOADTALENTS              = 25,
-    PLAYER_LOGIN_QUERY_LOADWEKLYQUESTSTATUS     = 26,
-    MAX_PLAYER_LOGIN_QUERY                      = 27
+    PLAYER_LOGIN_QUERY_LOADFROM,
+    PLAYER_LOGIN_QUERY_LOADGROUP,
+    PLAYER_LOGIN_QUERY_LOADBOUNDINSTANCES,
+    PLAYER_LOGIN_QUERY_LOADAURAS,
+    PLAYER_LOGIN_QUERY_LOADSPELLS,
+    PLAYER_LOGIN_QUERY_LOADQUESTSTATUS,
+    PLAYER_LOGIN_QUERY_LOADDAILYQUESTSTATUS,
+    PLAYER_LOGIN_QUERY_LOADREPUTATION,
+    PLAYER_LOGIN_QUERY_LOADINVENTORY,
+    PLAYER_LOGIN_QUERY_LOADACTIONS,
+    PLAYER_LOGIN_QUERY_LOADSOCIALLIST,
+    PLAYER_LOGIN_QUERY_LOADHOMEBIND,
+    PLAYER_LOGIN_QUERY_LOADSPELLCOOLDOWNS,
+    PLAYER_LOGIN_QUERY_LOADDECLINEDNAMES,
+    PLAYER_LOGIN_QUERY_LOADGUILD,
+    PLAYER_LOGIN_QUERY_LOADARENAINFO,
+    PLAYER_LOGIN_QUERY_LOADACHIEVEMENTS,
+    PLAYER_LOGIN_QUERY_LOADCRITERIAPROGRESS,
+    PLAYER_LOGIN_QUERY_LOADEQUIPMENTSETS,
+    PLAYER_LOGIN_QUERY_LOADBGDATA,
+    PLAYER_LOGIN_QUERY_LOADACCOUNTDATA,
+    PLAYER_LOGIN_QUERY_LOADSKILLS,
+    PLAYER_LOGIN_QUERY_LOADGLYPHS,
+    PLAYER_LOGIN_QUERY_LOADMAILS,
+    PLAYER_LOGIN_QUERY_LOADMAILEDITEMS,
+    PLAYER_LOGIN_QUERY_LOADTALENTS,
+    PLAYER_LOGIN_QUERY_LOADWEEKLYQUESTSTATUS,
+
+    MAX_PLAYER_LOGIN_QUERY
 };
 
 enum PlayerDelayedOperations
@@ -1454,6 +1455,10 @@ class MANGOS_DLL_SPEC Player : public Unit
         static void Customize(uint64 guid, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair);
         static void SavePositionInDB(uint32 mapid, float x,float y,float z,float o,uint32 zone,uint64 guid);
 
+        static void DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmChars = true, bool deleteFinally = false);
+        static void DeleteOldCharacters();
+        static void DeleteOldCharacters(uint32 keepDays);
+
         bool m_mailsUpdated;
 
         void SendPetTameFailure(PetTameFailureReason reason);
@@ -1831,8 +1836,6 @@ class MANGOS_DLL_SPEC Player : public Unit
         void SendMessageToSetInRange(WorldPacket *data, float fist, bool self);
                                                             // overwrite Object::SendMessageToSetInRange
         void SendMessageToSetInRange(WorldPacket *data, float dist, bool self, bool own_team_only);
-
-        static void DeleteFromDB(uint64 playerguid, uint32 accountId, bool updateRealmChars = true);
 
         Corpse *GetCorpse() const;
         void SpawnCorpseBones();
