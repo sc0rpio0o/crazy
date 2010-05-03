@@ -123,13 +123,41 @@ bool ChatHandler::HandleNpcWhisperCommand(const char* args)
 }
 //----------------------------------------------------------
 
-// global announce
+// Administrator .announce [System Message] Command
 bool ChatHandler::HandleAnnounceCommand(const char* args)
 {
     if(!*args)
         return false;
 
     sWorld.SendWorldText(LANG_SYSTEMMESSAGE,args);
+    return true;
+}
+
+// Moderator .nameannounce Command with Colored Name and GM Rank
+bool ChatHandler::HandleNameAnnounceCommand(const char* args)
+{
+    int32 strid = 0;
+
+   if(!*args)
+        return false;
+
+    switch(m_session->GetSecurity())
+    {
+      case SEC_MODERATOR:
+        strid = LANG_SYSTEMMESSAGE_MODERATOR;
+        break;
+      case SEC_GAMEMASTER:
+        strid = LANG_SYSTEMMESSAGE_GAMEMASTER;
+        break;
+      case SEC_ADMINISTRATOR:
+        strid = LANG_SYSTEMMESSAGE_ADMINISTRATOR;
+        break;
+      default:
+        return false;
+    }
+
+    sWorld.SendWorldText(strid, m_session->GetPlayerName(), args);
+
     return true;
 }
 
