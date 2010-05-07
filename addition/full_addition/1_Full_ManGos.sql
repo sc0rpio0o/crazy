@@ -32,3 +32,11 @@ INSERT INTO `spell_proc_event` VALUES
 -- 11_Spell_Proc_Event_ManGos
 
 DELETE FROM `spell_bonus_data` WHERE `entry` = 8026;
+
+-- 13_Spell_Proc_Event_ManGos
+
+DELETE FROM `spell_proc_event` WHERE `entry` IN (44543,44545);
+INSERT INTO `spell_proc_event` VALUES
+(44543,0,3,33555104,0,0,0,0,0,7,0),
+(44545,0,3,33555104,0,0,0,0,0,15,0);
+
