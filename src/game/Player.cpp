@@ -17435,7 +17435,7 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
 
         if(spellInfo)
         {
-            for(uint32 i = 0; i < MAX_REAGENTS; ++i)
+            for(uint32 i = 0; i < MAX_SPELL_REAGENTS; ++i)
             {
                 if(spellInfo->Reagent[i] > 0)
                 {
@@ -18746,7 +18746,7 @@ void Player::SendCooldownEvent(SpellEntry const *spellInfo, uint32 itemId, Spell
 
 void Player::UpdatePotionCooldown(Spell* spell)
 {
-    // no potion used i combat or still in combat
+    // no potion used in combat or still in combat
     if(!m_lastPotionId || isInCombat())
         return;
 
