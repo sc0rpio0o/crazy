@@ -2581,8 +2581,8 @@ void Player::UpdateFreeTalentPoints(bool resetIfNeed)
         {
             if (resetIfNeed && GetSession()->GetSecurity() < SEC_ADMINISTRATOR)
                 resetTalents(true);
-            else
-                SetFreeTalentPoints(0);
+            //else
+                //SetFreeTalentPoints(0);
         }
         // else update amount of free points
         else

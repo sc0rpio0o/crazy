@@ -147,17 +147,20 @@ extern int main(int argc, char **argv)
     sLog.outString( "%s [world-daemon]", _FULLVERSION(REVISION_DATE,REVISION_TIME,REVISION_NR,REVISION_ID) );
     sLog.outString( "<Ctrl-C> to stop.\n\n" );
 
-    sLog.outTitle( "MM   MM         MM   MM  MMMMM   MMMM   MMMMM");
-    sLog.outTitle( "MM   MM         MM   MM MMM MMM MM  MM MMM MMM");
-    sLog.outTitle( "MMM MMM         MMM  MM MMM MMM MM  MM MMM");
-    sLog.outTitle( "MM M MM         MMMM MM MMM     MM  MM  MMM");
-    sLog.outTitle( "MM M MM  MMMMM  MM MMMM MMM     MM  MM   MMM");
-    sLog.outTitle( "MM M MM M   MMM MM  MMM MMMMMMM MM  MM    MMM");
-    sLog.outTitle( "MM   MM     MMM MM   MM MM  MMM MM  MM     MMM");
-    sLog.outTitle( "MM   MM MMMMMMM MM   MM MMM MMM MM  MM MMM MMM");
-    sLog.outTitle( "MM   MM MM  MMM MM   MM  MMMMMM  MMMM   MMMMM");
-    sLog.outTitle( "        MM  MMM http://getmangos.com");
-    sLog.outTitle( "        MMMMMM\n\n");
+    sLog.outTitle( "");
+    sLog.outTitle( "            ** THIS REPACK MADE BY THE ELDER REPACK TEAM v 0.0.2 **");
+    sLog.outTitle( "    ____________   ___           _________      ____________   ___________");
+    sLog.outTitle( "   |............| |...|         |.........*    |............| |...........*");
+    sLog.outTitle( "   |....________| |...|         |....___...*   |....________| |....____....*");
+    sLog.outTitle( "   |...|______    |...|         |...|   *...*  |...|______    |...|   /.../");
+    sLog.outTitle( "   |..........|   |...|         |...|    |...| |..........|   |...|__/.../");
+    sLog.outTitle( "   |....______|   |...|         |...|    |...| |....______|   |...._....|");
+    sLog.outTitle( "   |...|________  |...|_______  |...|___/.../  |...|________  |...|  *...*");
+    sLog.outTitle( "   |............| |...........| |........../   |............| |...|   *...*");
+    sLog.outTitle( "   |____________| |___________| |_________/    |____________| |___|    *___|");
+    sLog.outTitle( "");
+    sLog.outTitle( "                   *** http://elderrepack.freeforums.org ***");
+
 
     sLog.outString("Using configuration file %s.", cfg_file);
 
