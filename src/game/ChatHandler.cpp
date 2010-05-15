@@ -121,9 +121,9 @@ void WorldSession::HandleMessagechatOpcode( WorldPacket & recv_data )
             if (sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_CHAT))
                 lang = LANG_UNIVERSAL;
             //TEAMBG code
-            else if(_player->isInTeamBG() && getTeamBGSide() == 1) //blue(ali)
+            else if(_player->isInTeamBG() && _player->getTeamBGSide() == 1) //blue(ali)
                 lang = LANG_COMMON;
-            else if(_player->isInTeamBG() && getTeamBGSide() == 2) //red(horde)
+            else if(_player->isInTeamBG() && _player->getTeamBGSide() == 2) //red(horde)
                 lang = LANG_ORCISH;
             else
             {
