@@ -762,6 +762,7 @@ bool Item::IsFitToSpellRequirements(SpellEntry const* spellInfo) const
     ItemPrototype const* proto = GetProto();
 
     //Lava Lash
+
     if (spellInfo->Id==60103 && spellInfo->EquippedItemClass==ITEM_CLASS_WEAPON)
          return true;
 
