@@ -9455,24 +9455,9 @@ uint32 Unit::SpellDamageBonusDone(Unit *pVictim, SpellEntry const *spellProto, u
     if (GetTypeId() == TYPEID_UNIT && ((Creature*)this)->isPet())
         DoneAdvertisedBenefit += ((Pet*)this)->GetBonusDamage();
 
-    float LvlPenalty = CalculateLevelPenalty(spellProto);
-
-    Player* modOwner = GetSpellModOwner();
-
-    // Check for table values
-    if (SpellBonusEntry const* bonus = sSpellMgr.GetSpellBonusData(spellProto->Id))
+    if (DoneAdvertisedBenefit)
     {
         float LvlPenalty = CalculateLevelPenalty(spellProto);
-    }
-    // Default calculation
-    else if (DoneAdvertisedBenefit)
-    {
-        // Damage over Time spells bonus calculation
-        float DotFactor = 1.0f;
-        if (damagetype == DOT)
-        {
-            if (!IsChanneledSpell(spellProto))
-                DotFactor = GetSpellDuration(spellProto) / 15000.0f;
 
         // Distribute Damage over multiple effects, reduce by AoE
         float coeff;
@@ -9488,17 +9473,19 @@ uint32 Unit::SpellDamageBonusDone(Unit *pVictim, SpellEntry const *spellProto, u
             if (bonus->ap_bonus)
                 DoneTotal += int32(bonus->ap_bonus * GetTotalAttackPowerValue(BASE_ATTACK));
         }
+        // Default calculation
+        else
+            coeff = CalculateDefaultCoefficient(spellProto, damagetype);
 
-        // Spellmod SpellBonusDamage
-        if (modOwner)
+        // Spellmod SpellDamage
+        if(Player* modOwner = GetSpellModOwner())
         {
             coeff *= 100.0f;
-            modOwner->ApplySpellMod(spellProto->Id,SPELLMOD_SPELL_BONUS_DAMAGE,coeff);
+            modOwner->ApplySpellMod(spellProto->Id,SPELLMOD_SPELL_BONUS_DAMAGE, coeff);
             coeff /= 100.0f;
         }
 
-        DoneTotal += int32(DoneAdvertisedBenefit * coeff * LvlPenalty);
-
+        DoneTotal  += int32(DoneAdvertisedBenefit * coeff * LvlPenalty);
     }
 
     float tmpDamage = (int32(pdamage) + DoneTotal * int32(stack)) * DoneTotalMod;
@@ -9507,8 +9494,8 @@ uint32 Unit::SpellDamageBonusDone(Unit *pVictim, SpellEntry const *spellProto, u
         modOwner->ApplySpellMod(spellProto->Id, damagetype == DOT ? SPELLMOD_DOT : SPELLMOD_DAMAGE, tmpDamage);
 
     return tmpDamage > 0 ? uint32(tmpDamage) : 0;
-	}
-}	
+}
+	
 /**
  * Calculates target part of spell damage bonuses,
  * will be called on each tick for periodic damage over time auras
@@ -9581,6 +9568,14 @@ uint32 Unit::SpellDamageBonusTaken(Unit *pCaster, SpellEntry const *spellProto, 
         // Default calculation
         else 
             coeff = CalculateDefaultCoefficient(spellProto, damagetype);
+
+        // Spellmod SpellDamage
+        if(Player* modOwner = pCaster->GetSpellModOwner())
+        {
+            coeff *= 100.0f;
+            modOwner->ApplySpellMod(spellProto->Id,SPELLMOD_SPELL_BONUS_DAMAGE, coeff);
+            coeff /= 100.0f;
+        }
 
         TakenTotal += int32(TakenAdvertisedBenefit * coeff * LvlPenalty);
     }
@@ -10003,36 +9998,9 @@ uint32 Unit::SpellHealingBonusDone(Unit *pVictim, SpellEntry const *spellProto, 
     // Done fixed damage bonus auras
     int32 DoneAdvertisedBenefit  = SpellBaseHealingBonusDone(GetSpellSchoolMask(spellProto));
 
-    float LvlPenalty = CalculateLevelPenalty(spellProto);
-
-    Player* modOwner = GetSpellModOwner();
-
-    // Check for table values
-    SpellBonusEntry const* bonus = sSpellMgr.GetSpellBonusData(spellProto->Id);
-    if (bonus)
+    if (DoneAdvertisedBenefit)
     {
         float LvlPenalty = CalculateLevelPenalty(spellProto);
-
-        // Spellmod SpellDamage
-        float SpellModSpellDamage = 100.0f;
-        if(Player* modOwner = GetSpellModOwner())
-            modOwner->ApplySpellMod(spellProto->Id, SPELLMOD_SPELL_BONUS_DAMAGE, SpellModSpellDamage);
-        SpellModSpellDamage /= 100.0f;
-
-    }
-    // Default calculation
-    else if (DoneAdvertisedBenefit)
-    {
-        // Damage over Time spells bonus calculation
-        float DotFactor = 1.0f;
-        if(damagetype == DOT)
-        {
-            if(!IsChanneledSpell(spellProto))
-                DotFactor = GetSpellDuration(spellProto) / 15000.0f;
-            uint16 DotTicks = GetSpellAuraMaxTicks(spellProto);
-            if(DotTicks)
-                DoneAdvertisedBenefit = DoneAdvertisedBenefit / DotTicks;
-        }
 
         // Distribute Damage over multiple effects, reduce by AoE
         float coeff;
@@ -10048,17 +10016,19 @@ uint32 Unit::SpellHealingBonusDone(Unit *pVictim, SpellEntry const *spellProto, 
             if (bonus->ap_bonus)
                 DoneTotal += int32(bonus->ap_bonus * GetTotalAttackPowerValue(BASE_ATTACK));
         }
+        // Default calculation
+        else
+            coeff = CalculateDefaultCoefficient(spellProto, damagetype) * 1.88f;
 
-        // Spellmod SpellBonusDamage
-        if (modOwner)
+        // Spellmod SpellDamage
+        if(Player* modOwner = GetSpellModOwner())
         {
             coeff *= 100.0f;
-            modOwner->ApplySpellMod(spellProto->Id,SPELLMOD_SPELL_BONUS_DAMAGE,coeff);
+            modOwner->ApplySpellMod(spellProto->Id,SPELLMOD_SPELL_BONUS_DAMAGE, coeff);
             coeff /= 100.0f;
         }
 
         DoneTotal  += int32(DoneAdvertisedBenefit * coeff * LvlPenalty);
-
     }
 
     // use float as more appropriate for negative values and percent applying
@@ -10117,6 +10087,14 @@ uint32 Unit::SpellHealingBonusTaken(Unit *pCaster, SpellEntry const *spellProto,
         // Default calculation
         else
             coeff = CalculateDefaultCoefficient(spellProto, damagetype) * 1.88f;
+
+        // Spellmod SpellDamage
+        if(Player* modOwner = pCaster->GetSpellModOwner())
+        {
+            coeff *= 100.0f;
+            modOwner->ApplySpellMod(spellProto->Id,SPELLMOD_SPELL_BONUS_DAMAGE, coeff);
+            coeff /= 100.0f;
+        }
 
         TakenTotal += int32(TakenAdvertisedBenefit * coeff * LvlPenalty);
     }
